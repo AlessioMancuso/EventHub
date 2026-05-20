@@ -19,4 +19,7 @@ export class AuthService {
 
   getToken() { return this.keycloak?.token; }
   isLoggedIn() { return !!this.keycloak?.authenticated; }
+  login() { return this.keycloak?.login(); }
+  logout() { return this.keycloak?.logout(); }
+  getUserObservable() { return this.user$.asObservable(); }
 }
