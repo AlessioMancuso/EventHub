@@ -68,7 +68,11 @@ class MyRegs(Resource):
         for r in regs:
             ticket = Ticket.query.filter_by(registration_id=r.id).first()
             event = Event.query.get(r.event_id)
-            result.append({'registration_id': r.id, 'event': {'id': event.id, 'title': event.title}, 'ticket': {'id': ticket.id if ticket else None}})
+            result.append({
+                'registration_id': r.id,
+                'event': {'id': event.id, 'title': event.title, 'start_datetime': event.start_datetime},
+                'ticket': {'id': ticket.id if ticket else None, 'qr_base64': ticket.qr_code_data if ticket else None}
+            })
         return result
 
 
