@@ -9,3 +9,5 @@ python-dotenv>=1.0
 psycopg2-binary>=2.9
 pytest>=7.0
 qrcode>=7.3
+python-jose[cryptography]>=3.3.0
+requests>=2.28
