@@ -2,6 +2,14 @@
 
 Setup rapido:
 
+1. Copia il file di esempio delle variabili d'ambiente:
+
+```bash
+cp ../.env.example .env
+```
+
+2. Crea e attiva un virtualenv
+
 1. Creare e attivare un virtualenv
 
 ```bash

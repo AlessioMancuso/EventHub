@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env.*
+.venv/
+venv/
+pyvenv.cfg
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+pnpm-lock.yaml
+
+# Angular
+dist/
+coverage/
+frontend/.angular/
+
+# Docker
+*.log
+
+# IDE
+.vscode/
+.idea/

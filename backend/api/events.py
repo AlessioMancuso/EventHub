@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields, reqparse
-from flask import request
+from flask import request, url_for
 from ..models import Event
 from ..extensions import db
 from datetime import datetime
@@ -59,3 +59,28 @@ class EventList(Resource):
 
         events = query.order_by(Event.start_datetime).limit(100).all()
         return events
+
+
+@ns.route('/<int:event_id>')
+class EventDetail(Resource):
+    def get(self, event_id):
+        ev = Event.query.get(event_id)
+        if not ev:
+            return {'message': 'Event not found'}, 404
+        cover_url = None
+        if ev.cover_image:
+            cover_url = url_for('uploaded_file', filename=ev.cover_image, _external=True)
+        return {
+            'id': ev.id,
+            'title': ev.title,
+            'description': ev.description,
+            'category': ev.category,
+            'city': ev.city,
+            'venue': ev.venue,
+            'start_datetime': ev.start_datetime.isoformat() if ev.start_datetime else None,
+            'end_datetime': ev.end_datetime.isoformat() if ev.end_datetime else None,
+            'capacity': ev.capacity,
+            'price_cents': ev.price_cents,
+            'cover_image_url': cover_url,
+            'organizer_id': ev.organizer_id
+        }

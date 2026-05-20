@@ -8,6 +8,7 @@ from ..utils.decorators import role_required
 import os
 import io
 import csv
+from datetime import datetime
 from sqlalchemy import func
 
 ns = Namespace('organizer', description='Organizer operations')
@@ -28,6 +29,15 @@ ALLOWED_EXT = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
+
+
+def parse_datetime(value):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value)
+    except Exception:
+        return None
 
 
 @ns.route('/events')
@@ -58,8 +68,8 @@ class OrganizerEvents(Resource):
             category=data.get('category'),
             city=data.get('city'),
             venue=data.get('venue'),
-            start_datetime=data.get('start_datetime'),
-            end_datetime=data.get('end_datetime'),
+            start_datetime=parse_datetime(data.get('start_datetime')),
+            end_datetime=parse_datetime(data.get('end_datetime')),
             capacity=int(data.get('capacity') or 0),
             price_cents=int(data.get('price_cents') or 0),
             cover_image=filename,
@@ -108,7 +118,13 @@ class OrganizerEvent(Resource):
         data = request.form.to_dict()
         for k, v in data.items():
             if hasattr(ev, k) and v is not None:
-                setattr(ev, k, v)
+                if k in ('start_datetime', 'end_datetime'):
+                    parsed = parse_datetime(v)
+                    setattr(ev, k, parsed)
+                elif k in ('capacity', 'price_cents'):
+                    setattr(ev, k, int(v or 0))
+                else:
+                    setattr(ev, k, v)
         file = request.files.get('cover_image')
         if file and allowed_file(file.filename):
             fname = secure_filename(file.filename)

@@ -16,3 +16,12 @@ def init_extensions(app):
     jwt.init_app(app)
     ma.init_app(app)
     api.init_app(app)
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        from .models import User
+        identity = jwt_payload.get('sub')
+        if not identity:
+            return True
+        user = User.query.get(identity)
+        return user is None or user.banned

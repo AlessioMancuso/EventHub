@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, send_from_directory, url_for
+from flask_cors import CORS
 from .config import config_by_name
 from .extensions import init_extensions, api
 from .api import register_api
@@ -9,6 +10,7 @@ def create_app(config_name='dev'):
     app.config.from_object(config_by_name.get(config_name, config_by_name['dev']))
 
     init_extensions(app)
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
     register_api(app)
 
     # ensure upload folder exists
@@ -20,5 +22,9 @@ def create_app(config_name='dev'):
     @app.route('/')
     def index():
         return {'service': 'EventHub backend', 'status': 'ok'}
+
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        return send_from_directory(app.config.get('UPLOAD_FOLDER'), filename)
 
     return app

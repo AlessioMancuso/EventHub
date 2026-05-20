@@ -1,9 +1,10 @@
 from flask_restx import Namespace, Resource, fields
-from flask import request
+from flask import request, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from ..extensions import db
 from ..models import User, Role
+from ..schemas import UserSchema
 
 ns = Namespace('auth', description='Authentication')
 
@@ -24,9 +25,14 @@ class Register(Resource):
     @ns.expect(register_model)
     def post(self):
         data = request.get_json() or {}
-        email = data.get('email')
+        schema = UserSchema(only=('email', 'name'))
+        try:
+            validated = schema.load(data)
+        except Exception as err:
+            return {'message': 'Invalid input', 'errors': err.messages if hasattr(err, 'messages') else str(err)}, 400
+        email = validated.get('email')
         password = data.get('password')
-        name = data.get('name')
+        name = validated.get('name')
         if not email or not password:
             return {'message': 'Email and password required'}, 400
         if User.query.filter_by(email=email).first():
@@ -49,6 +55,8 @@ class Login(Resource):
         user = User.query.filter_by(email=email).first()
         if not user or not check_password_hash(user.password_hash or '', password):
             return {'message': 'Invalid credentials'}, 401
+        if user.banned:
+            return {'message': 'User is banned'}, 403
         access = create_access_token(identity=user.id, additional_claims={'role': user.role})
         refresh = create_refresh_token(identity=user.id)
         return {'access_token': access, 'refresh_token': refresh}
@@ -74,6 +82,39 @@ class Me(Resource):
             return {'message': 'Not found'}, 404
         return {'id': user.id, 'email': user.email, 'name': user.name, 'role': user.role}
 
+    @jwt_required()
+    def put(self):
+        data = request.get_json() or {}
+        user = User.query.get(get_jwt_identity())
+        if not user:
+            return {'message': 'Not found'}, 404
+        email = data.get('email')
+        name = data.get('name')
+        if email and email != user.email and User.query.filter_by(email=email).first():
+            return {'message': 'Email already exists'}, 400
+        if email:
+            user.email = email
+        if name is not None:
+            user.name = name
+        db.session.commit()
+        return {'id': user.id, 'email': user.email, 'name': user.name, 'role': user.role}
+
+
+@ns.route('/me/password')
+class ChangePassword(Resource):
+    @jwt_required()
+    def put(self):
+        data = request.get_json() or {}
+        old_password = data.get('old_password')
+        new_password = data.get('new_password')
+        if not old_password or not new_password:
+            return {'message': 'Old and new password required'}, 400
+        user = User.query.get(get_jwt_identity())
+        if not user or not check_password_hash(user.password_hash or '', old_password):
+            return {'message': 'Invalid current password'}, 403
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
+        return {'message': 'Password updated'}
 
 
 @ns.route('/keycloak')

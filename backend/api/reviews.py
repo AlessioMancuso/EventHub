@@ -42,3 +42,15 @@ class EventReview(Resource):
         db.session.add(rev)
         db.session.commit()
         return {'id': rev.id, 'rating': rev.rating, 'comment': rev.comment}, 201
+
+
+@ns.route('/<int:review_id>/flag')
+class FlagReview(Resource):
+    @jwt_required()
+    def post(self, review_id):
+        review = Review.query.get(review_id)
+        if not review:
+            return {'message': 'Review not found'}, 404
+        review.flagged = True
+        db.session.commit()
+        return {'message': 'Review flagged for moderation'}
