@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: eventhub
+      POSTGRES_PASSWORD: eventhub
+      POSTGRES_DB: eventhub
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    environment:
+      KC_DB: dev-mem
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    ports:
+      - "8080:8080"
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://eventhub:eventhub@db:5432/eventhub
+      FLASK_CONFIG: dev
+      KEYCLOAK_ISSUER: http://keycloak:8080/realms/master
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/realms/master/protocol/openid-connect/certs
+      KEYCLOAK_CLIENT_ID: eventhub-client
+    depends_on:
+      - db
+      - keycloak
+    ports:
+      - "5000:5000"
+
+volumes:
+  db_data:

@@ -5,6 +5,7 @@ from ..models import Event, Registration, Ticket, User
 from ..extensions import db
 from ..utils.qr import generate_qr_base64
 import json
+from ..utils.async_tasks import send_email_async
 import base64
 from flask import make_response
 from flask_jwt_extended import get_jwt
@@ -43,6 +44,13 @@ class EventRegister(Resource):
         ticket = Ticket(registration_id=reg.id, qr_code_data=qr_b64)
         db.session.add(ticket)
         db.session.commit()
+        # invio email conferma in background (semplice)
+        try:
+            user = User.query.get(user_id)
+            if user and user.email:
+                send_email_async(user.email, f"Conferma iscrizione: {event.title}", f"Sei iscritto all'evento {event.title}.")
+        except Exception:
+            pass
         return {'registration_id': reg.id, 'ticket_id': ticket.id, 'qr_base64': qr_b64}, 201
 
     @jwt_required()
