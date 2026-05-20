@@ -9,8 +9,10 @@ def register_api(app):
     from .auth import ns as auth_ns
     from .events import ns as events_ns
     from .registrations import ns as regs_ns
+    from .reviews import ns as reviews_ns
 
     api.init_app(app)
     api.add_namespace(auth_ns)
     api.add_namespace(events_ns)
     api.add_namespace(regs_ns)
+    api.add_namespace(reviews_ns)
