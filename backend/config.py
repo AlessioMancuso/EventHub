@@ -9,6 +9,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret")
     RESTX_MASK_SWAGGER = False
+    UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB
 
 class DevelopmentConfig(Config):
     DEBUG = True
