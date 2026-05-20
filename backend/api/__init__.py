@@ -11,6 +11,7 @@ def register_api(app):
     from .registrations import ns as regs_ns
     from .reviews import ns as reviews_ns
     from .organizer import ns as organizer_ns
+    from .admin import ns as admin_ns
 
     api.init_app(app)
     api.add_namespace(auth_ns)
@@ -18,3 +19,4 @@ def register_api(app):
     api.add_namespace(regs_ns)
     api.add_namespace(reviews_ns)
     api.add_namespace(organizer_ns)
+    api.add_namespace(admin_ns)

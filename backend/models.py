@@ -49,3 +49,4 @@ class Review(db.Model):
     comment = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     moderated = db.Column(db.Boolean, default=False)
+    flagged = db.Column(db.Boolean, default=False)
