@@ -51,3 +51,16 @@ Modifica le variabili d'ambiente in `docker-compose.yml` se necessario.
 Nota: l'invio email è simulato con un task in background (threading). Per produzione configurare un server SMTP o Celery.
 
 L'API sarà disponibile su `http://localhost:5000` e Swagger UI su `/swagger/` (Flask-RESTX).
+
+Nota UI
+-------
+
+Il frontend include una veste grafica aggiornata (font `Inter`, palette professionale, favicon e piccoli effetti di animazione) per un aspetto più moderno e coerente. Avvia il frontend con Docker Compose sulla porta `4200`.
+
+Esempio rapido per sviluppo (da root):
+
+```bash
+docker compose up --build
+# Frontend: http://localhost:4200
+# Backend:  http://localhost:5000
+```
