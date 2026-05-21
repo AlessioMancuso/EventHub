@@ -1,4 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-body { font-family: Roboto, Arial, sans-serif; margin: 0; background: #f5f5f5; }
-mat-card { margin-bottom: 16px; }
+:root {
+  --bg-start: #f0f6ff;
+  --bg-end: #edf4fb;
+  --surface: #ffffff;
+  --surface-soft: rgba(255, 255, 255, 0.92);
+  --text-strong: #102a43;
+  --text-soft: #334e68;
+  --accent: #0d47a1;
+  --accent-soft: #dbeafe;
+  --border: rgba(16, 52, 101, 0.1);
+}
+
+html, body { min-height: 100%; margin: 0; font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif; background: radial-gradient(circle at top right, rgba(29, 78, 216, 0.16), transparent 24%), linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%); color: var(--text-strong); }
+body { overflow-x: hidden; }
+* { box-sizing: border-box; }
+
+/* Subtle animated accent for hero area */
+.hero-ambient {
+  position: absolute;
+  inset: -20% -10% auto auto;
+  width: 60rem;
+  height: 60rem;
+  background: radial-gradient(closest-side at 30% 30%, rgba(13,71,161,0.14), transparent 30%), radial-gradient(closest-side at 70% 70%, rgba(8,35,96,0.08), transparent 25%);
+  filter: blur(36px);
+  transform: translateZ(0);
+  animation: float 18s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes float { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-18px) scale(1.02); } 100% { transform: translateY(0) scale(1); } }
+
+mat-toolbar.mat-toolbar { padding: 0 24px; background: linear-gradient(90deg, #0f4c81, #0d47a1); color: #fff; }
+mat-card { margin-bottom: 24px; border-radius: 24px; box-shadow: 0 25px 80px rgba(15, 23, 42, 0.08); background: var(--surface); }
+button.mat-flat-button, button.mat-raised-button { font-weight: 600; font-size: 0.94rem; letter-spacing: 0.01em; transition: transform 120ms ease, box-shadow 120ms ease; }
+button.mat-flat-button:hover, button.mat-raised-button:hover { transform: translateY(-1px); }
+button.mat-stroked-button { border-width: 1.5px; }
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex { background: var(--surface-soft); }
+body ::ng-deep .mat-input-element { color: var(--text-strong); }
+
+::ng-deep .mat-snack-bar-container { border-radius: 14px; font-weight: 600; }
+
+.app-shell { width: 100%; }
+.page-container { max-width: 1170px; margin: auto; padding: 0 18px; }
+
+h1, h2, h3, h4, h5, h6 { font-family: 'Inter', sans-serif; letter-spacing: -0.03em; }
+
+@media (max-width: 960px) {
+  .page-container { padding: 0 14px; }
+}
