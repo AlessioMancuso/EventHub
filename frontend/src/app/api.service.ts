@@ -10,6 +10,7 @@ export class ApiService {
 
   login(payload: any) { return this.http.post(`${this.base}/auth/login`, payload); }
   register(payload: any) { return this.http.post(`${this.base}/auth/register`, payload); }
+  keycloak(token: string) { return this.http.post(`${this.base}/auth/keycloak`, { token }); }
   me() { return this.http.get(`${this.base}/auth/me`); }
   updateProfile(payload: any) { return this.http.put(`${this.base}/auth/me`, payload); }
   changePassword(payload: any) { return this.http.put(`${this.base}/auth/me/password`, payload); }

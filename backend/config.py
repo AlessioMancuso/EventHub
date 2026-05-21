@@ -12,6 +12,12 @@ class Config:
     UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads')
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024  # 10MB
 
+    # Keycloak / OIDC configuration
+    KEYCLOAK_ISSUER = os.getenv("KEYCLOAK_ISSUER")
+    KEYCLOAK_JWKS_URI = os.getenv("KEYCLOAK_JWKS_URI")
+    KEYCLOAK_CLIENT_ID = os.getenv("KEYCLOAK_CLIENT_ID")
+    KEYCLOAK_AUDIENCE = os.getenv("KEYCLOAK_AUDIENCE")
+
 class DevelopmentConfig(Config):
     DEBUG = True
 

@@ -8,7 +8,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 ma = Marshmallow()
-api = Api(version="1.0", title="EventHub API", description="API for EventHub platform")
+api = Api(version="1.0", title="EventHub API", description="API for EventHub platform", prefix='/api', doc='/swagger/')
 
 def init_extensions(app):
     db.init_app(app)

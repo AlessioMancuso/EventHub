@@ -27,8 +27,33 @@ def verify_keycloak_token(token: str, audience: str = None):
         raise RuntimeError('Keycloak not configured')
     jwks = fetch_jwks(jwks_uri)
     try:
-        options = {"verify_aud": bool(audience)}
-        claims = jwt.decode(token, jwks, audience=audience, issuer=issuer, options=options)
+        # Keycloak access tokens sometimes set aud to the account service and
+        # client ID in azp for public clients. Also allow local host issuer
+        # and internal docker issuer variants during development.
+        options = {"verify_aud": False, "verify_iss": False}
+        claims = jwt.decode(token, jwks, options=options)
+
+        token_issuer = claims.get('iss')
+        allowed_issuers = {issuer}
+        if issuer:
+            if issuer.startswith('http://keycloak:'):
+                allowed_issuers.add(issuer.replace('http://keycloak:', 'http://localhost:'))
+            elif issuer.startswith('http://localhost:'):
+                allowed_issuers.add(issuer.replace('http://localhost:', 'http://keycloak:'))
+
+        if issuer and token_issuer not in allowed_issuers:
+            raise JWTError('Invalid issuer')
+
+        if audience:
+            aud_claim = claims.get('aud')
+            azp = claims.get('azp')
+            aud_values = []
+            if isinstance(aud_claim, str):
+                aud_values = [aud_claim]
+            elif isinstance(aud_claim, list):
+                aud_values = aud_claim
+            if audience not in aud_values and azp != audience:
+                raise JWTError('Invalid audience')
         return claims
     except JWTError as e:
         raise

@@ -13,7 +13,6 @@ def register_api(app):
     from .organizer import ns as organizer_ns
     from .admin import ns as admin_ns
 
-    api.init_app(app)
     api.add_namespace(auth_ns)
     api.add_namespace(events_ns)
     api.add_namespace(regs_ns)

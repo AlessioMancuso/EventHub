@@ -19,6 +19,12 @@ def create_app(config_name='dev'):
     if upload_folder:
         os.makedirs(upload_folder, exist_ok=True)
 
+    # create database tables automatically in development
+    if app.config.get('DEBUG'):
+        from .extensions import db
+        with app.app_context():
+            db.create_all()
+
     @app.route('/')
     def index():
         return {'service': 'EventHub backend', 'status': 'ok'}

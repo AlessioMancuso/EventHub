@@ -26,7 +26,13 @@ docker-compose up --build
 
 - `backend/`: Flask REST API e modelli SQLAlchemy
 - `frontend/`: applicazione Angular con routing, guard, JWT e Material UI
-- `docker-compose.yml`: backend, database, frontend (e Keycloak opzionale)
+- `docker-compose.yml`: backend, database, frontend e Keycloak
+
+## Keycloak locale
+- Keycloak è esposto su `http://localhost:8080`
+- Usa le credenziali `admin` / `admin` per entrare nella Console di amministrazione
+- Configura un client con ID `eventhub-client`, redirect URI `http://localhost:4200/*` e web origin `http://localhost:4200`
+- Il backend federerà il token Keycloak con l’endpoint `POST /api/auth/keycloak`
 
 ## Note
 
